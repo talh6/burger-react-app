@@ -3,6 +3,8 @@ import Aux from '../../hoc/Aux'
 import Burger from '../../components/Burger/Burger'
 import BuilderControls
   from "../../components/Burger/BuildControls/BuildControls";
+import Model from '../../components/UI/Model/model';
+import OrderSummery from '../../components/Burger/OrderSummery/OrderSummery'
 
 const INGREDIENT_PRICES = {
   salad: 0.5,
@@ -21,9 +23,14 @@ class BurgerBuilder extends Component{
       meat: 0
     },
     totalPrice: 4,
-    purchaseAble: false
+    purchaseAble: false,
+    purchasing: false
   };
 
+
+  purchaseHandler = () =>{
+      this.setState({purchasing: true});
+  };
 
   updatePurchaseState =(updatedIngredients) => {
     const sum = Object.keys(updatedIngredients).map(igKey =>{
@@ -63,6 +70,10 @@ class BurgerBuilder extends Component{
     this.updatePurchaseState(updatedIngredients);
   };
 
+  purchaseCancelHandler = () => {
+    this.setState({purchasing: false})
+  };
+
   render(){
     const disableInfo = {
       ...this.state.ingredients
@@ -72,12 +83,19 @@ class BurgerBuilder extends Component{
     }
       return (
         <Aux>
+          <Model show ={this.state.purchasing}
+                 modelClosed = {this.purchaseCancelHandler}
+          >
+            <OrderSummery ingredients = {this.state.ingredients}/>
+          </Model>
           <Burger ingredients = {this.state.ingredients}/>
           <BuilderControls ingredientsAdded={this.addIngredientsHandler}
                            ingredientsRemoved ={this.removeIngredientsHandler}
                            disabled ={disableInfo}
                            purchaseAble = {this.state.purchaseAble}
-                           price ={this.state.totalPrice}/>
+                           price ={this.state.totalPrice}
+                           ordered = {this.purchaseHandler}
+          />
         </Aux>
       );
   }
